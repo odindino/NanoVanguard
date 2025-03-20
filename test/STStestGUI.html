@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>STS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .pending { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="stsButton" onclick="startSTS()">Start STS</button>
+        <div id="status">Ready to start STS measurement</div>
+    </div>
+
+    <script>
+        async function startSTS() {
+            const button = document.getElementById('stsButton');
+            const status = document.getElementById('status');
+            
+            try {
+                button.disabled = true;
+                status.className = 'pending';
+                status.textContent = 'Starting STS measurement...';
+                
+                const result = await pywebview.api.execute_sts();
+                
+                if (result) {
+                    status.className = 'success';
+                    status.textContent = 'STS measurement started successfully';
+                } else {
+                    status.className = 'error';
+                    status.textContent = 'Failed to start STS measurement';
+                }
+            } catch (error) {
+                status.className = 'error';
+                status.textContent = `Error: ${error}`;
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
